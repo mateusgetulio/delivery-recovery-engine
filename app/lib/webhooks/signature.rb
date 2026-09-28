@@ -12,8 +12,11 @@ module Webhooks
       ActiveSupport::SecurityUtils.secure_compare(sign(raw_body, secret), signature.to_s)
     end
 
-    def self.secret
-      ENV.fetch("WEBHOOK_SECRET") { Rails.application.credentials.webhook_secret || "development-only-secret" }
+    def self.secret(env = Rails.env)
+      ENV.fetch("WEBHOOK_SECRET") do
+        Rails.application.credentials.webhook_secret ||
+          (env.local? ? "development-only-secret" : raise(KeyError, "WEBHOOK_SECRET is not set"))
+      end
     end
   end
 end

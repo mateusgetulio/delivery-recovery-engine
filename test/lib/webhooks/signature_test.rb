@@ -13,5 +13,13 @@ module Webhooks
       refute Signature.valid?(body, nil, "s")
       refute Signature.valid?(body, "", "s")
     end
+
+    test "the fallback secret exists only in local environments" do
+      ENV.delete("WEBHOOK_SECRET")
+      assert_equal "development-only-secret", Signature.secret
+      assert_raises(KeyError) { Signature.secret(ActiveSupport::EnvironmentInquirer.new("production")) }
+    ensure
+      ENV["WEBHOOK_SECRET"] = WebhookHelpers::SECRET
+    end
   end
 end

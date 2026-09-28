@@ -115,7 +115,30 @@ module InboundEvents
 
       assert_equal :already_processed, result.outcome
       assert_equal 1, Transition.count
+      assert_equal [ "processed", "already_applied" ], [ event.reload.status, event.ignored_reason ]
+    end
+
+    test "a unique index collision from a racing worker is re-raised for retry, not parked as failed" do
+      event = receive(failed_body).event
+      colliding = RewardLookup.new({})
+      colliding.define_singleton_method(:call) { |_| raise ActiveRecord::RecordNotUnique, "another worker inserted the case first" }
+
+      assert_raises(ActiveRecord::RecordNotUnique) { Process.call(event.id, reward_lookup: colliding) }
+
+      assert_equal [ "pending", nil ], [ event.reload.status, event.last_error ]
+      Process.call(event.id, reward_lookup: lookup)
       assert_equal "processed", event.reload.status
+      assert_equal [ 1, 1 ], [ DeliveryCase.count, Transition.count ]
+    end
+
+    test "INV-10 equal timestamps are applied in inbox order at the processor" do
+      first = receive(failed_body(reason: "domain_block", occurred_at: Time.utc(2026, 9, 28, 10, 0))).event
+      second = receive(failed_body(reason: "invalid_email", retryable: false, occurred_at: Time.utc(2026, 9, 28, 10, 0))).event
+
+      Process.call(first.id, reward_lookup: lookup)
+      Process.call(second.id, reward_lookup: lookup)
+
+      assert_equal [ "invalid_email", "processed", "processed" ], [ DeliveryCase.sole.reason, first.reload.status, second.reload.status ]
     end
 
     test "a processing error marks the event failed with the error and re-raises" do

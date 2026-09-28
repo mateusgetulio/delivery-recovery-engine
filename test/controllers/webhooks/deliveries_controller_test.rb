@@ -45,6 +45,27 @@ module Webhooks
       assert_equal({ "status" => "duplicate" }, response.parsed_body)
       assert_equal 1, InboundEvent.count
       assert_equal 1, InboundEvent.sole.duplicates_seen
+
+      process_all
+
+      assert_equal 1, DeliveryCase.count
+      assert_equal 1, Transition.count
+      assert_equal 0, DeliveryCase.sole.resend_count
+    end
+
+    test "a signed known event with a missing payload field is stored as ignored, keeping its uuid for dedupe" do
+      body = JSON.generate(uuid: "u-1", event_type: "reward.delivery.failed", occurred_at: Time.utc(2026, 9, 28).iso8601, data: { reward_id: "rw_1" })
+
+      assert_no_enqueued_jobs do
+        post delivery_webhook_path, params: body, headers: signed_headers(body)
+        post delivery_webhook_path, params: body, headers: signed_headers(body)
+      end
+
+      assert_equal "duplicate", response.parsed_body["status"]
+      event = InboundEvent.sole
+      assert_equal [ "ignored", "invalid_payload", "rw_1" ], [ event.status, event.ignored_reason, event.reward_id ]
+      assert_match(/data.reason is missing/, event.last_error)
+      assert_equal 0, RejectedRequest.count
     end
 
     test "a signed but malformed body answers 200 rejected and is kept visible" do

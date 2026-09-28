@@ -13,7 +13,7 @@
     <% count = @counts[action] || 0 %>
     <%= link_to "#{CasePresenter.recommendation_label(action)} #{count}", root_path(recommendation: action), class: params[:recommendation] == action.to_s ? "pill active" : "pill" %>
   <% end %>
-  <%= link_to "No action #{@counts[nil] || 0}", root_path(recommendation: ""), class: "pill" if @counts[nil] %>
+  <%= link_to "No action #{@counts[nil] || 0}", root_path(recommendation: "none"), class: params[:recommendation] == "none" ? "pill active" : "pill" if @counts[nil] %>
 </section>
 
 <% if @rows.empty? %>

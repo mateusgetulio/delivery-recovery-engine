@@ -21,7 +21,7 @@ module InboundEvents
         inbound.increment!(:attempts)
         apply(inbound)
       end
-    rescue ActiveRecord::StaleObjectError
+    rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotUnique
       raise
     rescue StandardError => e
       InboundEvent.where(id: inbound_event_id).update_all(status: "failed", last_error: "#{e.class}: #{e.message}".truncate(500))
@@ -62,7 +62,7 @@ module InboundEvents
     end
 
     def already_applied(inbound)
-      inbound.update!(status: "processed")
+      inbound.update!(status: "processed", ignored_reason: "already_applied")
       Result.new(:already_processed, nil, nil)
     end
 

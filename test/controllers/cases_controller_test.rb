@@ -17,6 +17,20 @@ class CasesControllerTest < ActionDispatch::IntegrationTest
     assert_select "table.cases tbody tr", 3
   end
 
+  test "the queue filters settled cases under none and refuses a bad form gracefully" do
+    create_case(reward_id: "rw_a")
+    create_case(reward_id: "rw_done", status: "resolved")
+
+    get root_path(recommendation: "none")
+    assert_select "table.cases tbody tr", 1
+    assert_select "td", "rw_done"
+
+    post case_actions_path(DeliveryCase.find_by!(reward_id: "rw_a")), params: { action_name: "", lock_version: "abc" }
+    assert_response :redirect
+    follow_redirect!
+    assert_select ".flash.alert"
+  end
+
   test "the queue filters by recommendation" do
     create_case(reward_id: "rw_a")
     create_case(reward_id: "rw_b", reason: "invalid_email", retryable: false)
@@ -52,7 +66,7 @@ class CasesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to case_path(delivery_case)
     assert_equal 1, delivery_case.reload.resend_count
     follow_redirect!
-    assert_select ".flash.notice", /Action recorded/
+    assert_select ".flash.notice", /Record resend attempt recorded/
   end
 
   test "a stale form is refused with an alert and applies nothing" do

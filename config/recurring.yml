@@ -1,4 +1,4 @@
 production:
   process_pending_inbound_events:
-    command: "InboundEvent.pending.where(received_at: ..30.seconds.ago).find_each { |event| ProcessInboundEventJob.perform_later(event.id) }"
+    command: "InboundEvents::EnqueuePending.call"
     schedule: every minute

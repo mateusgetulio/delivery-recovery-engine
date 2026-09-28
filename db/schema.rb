@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_170000) do
   create_table "delivery_cases", force: :cascade do |t|
     t.string "reward_id", null: false
     t.string "channel"
@@ -43,7 +43,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
     t.integer "duplicates_seen", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "reward_id"
     t.index ["event_uuid"], name: "index_inbound_events_on_event_uuid", unique: true
+    t.index ["reward_id"], name: "index_inbound_events_on_reward_id"
     t.index ["status"], name: "index_inbound_events_on_status"
   end
 

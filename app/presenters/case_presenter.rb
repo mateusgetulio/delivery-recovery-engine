@@ -42,4 +42,12 @@ class CasePresenter
   def self.recommendation_label(action)
     action ? RECOMMENDATION_LABELS.fetch(action) : "None"
   end
+
+  def self.action_label(action)
+    ACTION_LABELS.fetch(action.to_s.to_sym) { "Action" }
+  end
+
+  def requested_destination
+    delivery_case.transitions.where(action: "record_new_destination").order(:id).last&.metadata&.dig("destination")
+  end
 end

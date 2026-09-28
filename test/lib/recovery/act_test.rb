@@ -50,6 +50,7 @@ module Recovery
       assert OrganizationSettings.current.relay_domain_registered
       assert_equal [ "open", "open", "awaiting_prerequisite" ], [ first.reload.status, second.reload.status, spam.reload.status ]
       assert_equal [ first, second ], result.affected_cases
+      assert_equal 1, result.delivery_case.lock_version
       assert_equal %w[mark_relay_domain_registered mark_relay_domain_registered], Transition.where(actor_type: "operator").order(:id).pluck(:action)
       assert_equal [ "op-2:#{first.id}", "op-2:#{second.id}" ], Transition.where(actor_type: "operator").order(:id).pluck(:cause_id)
       assert_equal :resend_same_destination, Policy.call(second.reload.facts, now: now).recommended_action
@@ -72,8 +73,9 @@ module Recovery
       Act.call(delivery_case.id, :request_new_destination, expected_lock_version: 0, now: now, params: { destination: "n***@example.com" })
 
       delivery_case.reload
-      assert_equal [ 0, "open", "n***@example.com" ], [ delivery_case.resend_count, delivery_case.status, delivery_case.destination ]
+      assert_equal [ 0, "open", nil ], [ delivery_case.resend_count, delivery_case.status, delivery_case.destination ]
       assert_equal({ "destination" => "n***@example.com" }, Transition.where(actor_type: "operator").sole.metadata)
+      assert_equal "n***@example.com", CasePresenter.new(delivery_case, Policy.call(delivery_case.facts, now: now)).requested_destination
     end
 
     test "deliver another way resolves, escalate and cancel close, and closed cases refuse everything" do
@@ -106,8 +108,13 @@ module Recovery
       assert_equal 0, delivery_case.reload.resend_count
     end
 
-    test "an unknown action is refused" do
-      assert_raises(ActionNotAllowed) { Act.call(create_case.id, :teleport, expected_lock_version: 0, now: now) }
+    test "an unknown, blank or versionless action is refused" do
+      delivery_case = create_case
+
+      assert_raises(ActionNotAllowed) { Act.call(delivery_case.id, :teleport, expected_lock_version: 0, now: now) }
+      assert_raises(ActionNotAllowed) { Act.call(delivery_case.id, "", expected_lock_version: 0, now: now) }
+      assert_raises(StaleCaseVersion) { Act.call(delivery_case.id, :escalate, expected_lock_version: nil, now: now) }
+      assert_equal 0, Transition.where(actor_type: "operator").count
     end
   end
 end

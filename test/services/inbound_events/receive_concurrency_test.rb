@@ -25,6 +25,10 @@ module InboundEvents
       assert_equal %i[accepted duplicate], statuses.sort
       assert_equal 1, InboundEvent.count
       assert_equal 1, InboundEvent.sole.duplicates_seen
+
+      process_all
+
+      assert_equal [ 1, 1, 0 ], [ DeliveryCase.count, Transition.count, DeliveryCase.sole.resend_count ]
     end
   end
 end

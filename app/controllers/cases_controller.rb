@@ -3,10 +3,9 @@ class CasesController < ApplicationController
     now = Time.current
     settings = OrganizationSettings.current
     config = Recovery.config
-    cases = DeliveryCase.order(latest_event_at: :desc, id: :desc).to_a
-    @rows = cases.map { |c| CasePresenter.new(c, Recovery::Policy.call(c.facts(settings), now: now, config: config)) }
-    @rows = @rows.select { |row| row.decision.recommended_action.to_s == params[:recommendation] } if params[:recommendation].present?
-    @counts = cases.group_by { |c| Recovery::Policy.call(c.facts(settings), now: now, config: config).recommended_action }.transform_values(&:size)
+    rows = DeliveryCase.order(latest_event_at: :desc, id: :desc).map { |c| CasePresenter.new(c, Recovery::Policy.call(c.facts(settings), now: now, config: config)) }
+    @counts = rows.group_by { |row| row.decision.recommended_action }.transform_values(&:size)
+    @rows = filter(rows, params[:recommendation])
     @inbox = {
       pending: InboundEvent.pending.count,
       failed: InboundEvent.where(status: "failed").count,
@@ -26,8 +25,15 @@ class CasesController < ApplicationController
 
   private
 
+  def filter(rows, recommendation)
+    return rows if recommendation.blank?
+    return rows.select { |row| row.decision.recommended_action.nil? } if recommendation == "none"
+
+    rows.select { |row| row.decision.recommended_action.to_s == recommendation }
+  end
+
   def history(delivery_case)
-    events = InboundEvent.where("payload ->> 'reward_id' = ?", delivery_case.reward_id).map { |e| [ e.received_at, :event, e ] }
+    events = InboundEvent.where(reward_id: delivery_case.reward_id).map { |e| [ e.received_at, :event, e ] }
     transitions = delivery_case.transitions.order(:id).map { |t| [ t.created_at, :transition, t ] }
     (events + transitions).sort_by { |time, kind, record| [ time, kind == :event ? 0 : 1, record.id ] }
   end

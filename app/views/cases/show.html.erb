@@ -1,6 +1,6 @@
 <% content_for :title, "Case #{@delivery_case.reward_id}" %>
 <p><%= link_to "Back to queue", root_path %></p>
-<h1>Reward <%= @delivery_case.reward_id %> <span class="status status-<%= @delivery_case.status %>"><%= @delivery_case.status.humanize %></span></h1>
+<h1>Reward <%= @delivery_case.reward_id %> <span class="status status-<%= @delivery_case.status %>"><%= @delivery_case.status.humanize %></span> <span class="owner owner-local">local</span></h1>
 
 <div class="columns">
   <section class="panel" aria-label="Facts">
@@ -9,9 +9,12 @@
       <dt>Channel <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.channel || "unknown" %></dd>
       <dt>Failure reason <span class="owner owner-event">event</span></dt><dd><% if @delivery_case.reason %><code><%= @delivery_case.reason %></code><% else %><span class="muted">none, last event was a success</span><% end %></dd>
       <dt>Retryable <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.retryable ? "yes" : "no" %></dd>
-      <dt>Latest event <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.latest_event_at&.utc&.iso8601 || "none" %></dd>
+      <dt>Latest event seen <span class="owner owner-local">local</span></dt><dd><%= @delivery_case.latest_event_at&.utc&.iso8601 || "none" %></dd>
       <dt>Destination <span class="owner owner-reward">reward</span></dt><dd><%= @delivery_case.destination || "unknown" %></dd>
       <dt>Expires <span class="owner owner-reward">reward</span></dt><dd><%= @delivery_case.expires_at&.utc&.iso8601 || "no expiry" %></dd>
+      <% if (requested = @presenter.requested_destination) %>
+        <dt>Destination recorded by operator <span class="owner owner-local">local</span></dt><dd><%= requested %></dd>
+      <% end %>
       <dt>Resend attempts <span class="owner owner-local">local</span></dt><dd><%= @delivery_case.resend_count %> of <%= Recovery.config.resend_cap %></dd>
       <% if @decision.prerequisite == :relay_registration %>
         <dt>Relay domain registered <span class="owner owner-local">organization</span></dt><dd><%= @settings.relay_domain_registered ? "yes" : "no" %></dd>

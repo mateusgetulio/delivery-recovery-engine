@@ -58,17 +58,17 @@ Six states: `open`, `awaiting_prerequisite`, `awaiting_recipient`, `resolved`, `
 
 ### Ingestion
 
-`POST /webhooks/delivery` verifies `X-Webhook-Signature` (HMAC-SHA256 hex over the raw body) with a constant-time compare. An invalid signature is a 401 that stores nothing and is counted. Every signed request answers 200 with a status body, because retrying a malformed or duplicate body cannot help: `accepted`, `duplicate`, `ignored` (unknown event type, stored as such) or `rejected` (malformed, stored in `rejected_requests` so it stays visible).
+`POST /webhooks/delivery` verifies `X-Webhook-Signature` (HMAC-SHA256 hex over the raw body) with a constant-time compare. An invalid signature is a 401 that stores nothing and is counted. Every signed request answers 200 with a status body, because retrying a malformed or duplicate body cannot help: `accepted`, `duplicate`, `ignored` (unknown event type, or a known type missing a payload field; stored in the inbox with the reason so its uuid still dedupes) or `rejected` (no uuid at all, stored in `rejected_requests` so it stays visible).
 
-Accepted events are durable in `inbound_events` before any processing. The job is enqueued after commit as an optimization; `bin/rails inbox:process_pending` and a recurring Solid Queue entry pick up anything left pending. There is no custom claim mechanism: the job runner claims, and the apply is idempotent.
+Accepted events are durable in `inbound_events` before any processing. The job is enqueued after the transaction commits (`enqueue_after_transaction_commit` is on) as an optimization; `bin/rails inbox:process_pending` and a recurring Solid Queue entry pick up anything left pending. There is no custom claim mechanism: the job runner claims, and the apply is idempotent.
 
 ### The apply transaction
 
-One transaction locks the inbound event, returns early if a transition already exists for it, computes the effect with the pure `Recovery::Apply`, writes the case, the transition and the inbox status flip, and commits. A worker that dies before commit leaves nothing; one that dies after commit finds the transition on retry and stops. A concurrent operator action raises a stale-object error that makes the job retry.
+One transaction locks the inbound event, returns early if a transition already exists for it, computes the effect with the pure `Recovery::Apply`, writes the case, the transition and the inbox status flip, and commits. A worker that dies before commit leaves nothing; one that dies after commit finds the transition on retry and stops. A concurrent operator action raises a stale-object error, and two workers racing to create the same case hit the unique index; both make the job retry rather than parking the event as failed.
 
 ### Operator actions
 
-Buttons record intent or work completed elsewhere; nothing sends anything, and the labels say so ("Record resend attempt", "Mark relay domain registered"). Every action goes through `Recovery::Act`, which checks the case version from the form, asks the policy whether the action is allowed, applies it and writes one transition, all in one transaction. Refusals are explicit errors: `ResendLimitReached`, `RewardExpired`, `PrerequisiteMissing`, `ActionNotAllowed`, `StaleCaseVersion`.
+Buttons record intent or work completed elsewhere; nothing sends anything, and the labels say so ("Record resend attempt", "Mark relay domain registered"). Every action goes through `Recovery::Act`, which checks the case version from the form, asks the policy whether the action is allowed, applies it and writes one transition, all in one transaction. Refusals are explicit errors: `ResendLimitReached`, `RewardExpired`, `PrerequisiteMissing`, `ActionNotAllowed`, `StaleCaseVersion`. Recording a new destination does not overwrite the reward-owned destination; the value lives in the transition and is shown as a local fact.
 
 ## Invariants
 
@@ -112,6 +112,8 @@ bin/ci                         # bin/setup, RuboCop, bundler-audit, Brakeman, te
 - SQLite serializes writers, so the two-thread tests assert on the unique index and the stale-version error rather than on true parallel interleaving. The row lock in the apply transaction is a no-op on SQLite and is there for a Postgres deployment.
 - A newer success on an already resolved case is applied as resolved to resolved, advancing the latest event time, so later stale checks stay correct.
 - Cancel is not offered on settled cases.
+- The history shows events and transitions, not the recommendation that held after each step; that is derived at render time for the current state only.
+- `WEBHOOK_SECRET` has a fallback only in development and test; production refuses to boot without it.
 - Reward facts come from a fixture file that stands in for a reward lookup API.
 
 ## What I would measure in production

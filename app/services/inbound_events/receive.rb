@@ -14,8 +14,7 @@ module InboundEvents
     def call
       envelope = Webhooks::Envelope.parse(raw_body)
       issues = envelope.payload_issues
-      return reject("#{issues.join('; ')}") if issues.any?
-
+      ignored_reason = ignored_reason_for(envelope, issues)
       event = InboundEvent.create!(
         event_uuid: envelope.uuid,
         event_type: envelope.event_type,
@@ -23,11 +22,13 @@ module InboundEvents
         received_at: received_at,
         raw_body: raw_body,
         payload: envelope.payload,
-        status: envelope.relevant? ? "pending" : "ignored",
-        ignored_reason: envelope.relevant? ? nil : "unsupported_event_type"
+        reward_id: envelope.payload.is_a?(Hash) ? envelope.payload["reward_id"] : nil,
+        status: ignored_reason ? "ignored" : "pending",
+        ignored_reason: ignored_reason,
+        last_error: issues.presence&.join("; ")
       )
-      ProcessInboundEventJob.perform_later(event.id) if envelope.relevant?
-      Result.new(envelope.relevant? ? :accepted : :ignored, event, nil)
+      ProcessInboundEventJob.perform_later(event.id) unless ignored_reason
+      Result.new(ignored_reason ? :ignored : :accepted, event, issues.presence&.join("; "))
     rescue ActiveRecord::RecordNotUnique
       existing = InboundEvent.find_by!(event_uuid: envelope.uuid)
       InboundEvent.where(id: existing.id).update_all("duplicates_seen = duplicates_seen + 1")
@@ -39,6 +40,13 @@ module InboundEvents
     private
 
     attr_reader :raw_body, :received_at
+
+    def ignored_reason_for(envelope, issues)
+      return "unsupported_event_type" unless envelope.relevant?
+      return "invalid_payload" if issues.any?
+
+      nil
+    end
 
     def reject(error)
       RejectedRequest.create!(raw_body: raw_body, error: error)
