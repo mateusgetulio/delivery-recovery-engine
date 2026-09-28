@@ -11,7 +11,7 @@
     <header class="topbar">
       <%= link_to "Delivery Recovery Engine", root_path, class: "brand" %>
       <span class="muted">Failures in, explainable decisions out</span>
-      <% if demo_panel %>
+      <% if in_demo? %>
         <%= button_to "Exit demo", demo_leave_path, method: :delete, class: "quiet topbar-action", form_class: "action-form" %>
       <% else %>
         <%= link_to "Start Guided Demo", demo_path, class: "topbar-action" %>

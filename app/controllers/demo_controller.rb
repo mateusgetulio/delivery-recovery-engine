@@ -13,6 +13,8 @@ class DemoController < ApplicationController
   end
 
   def step
+    return redirect_to(demo_path) if Demo::Tour.current(session).nil?
+
     number = Integer(params[:number], exception: false)
     step = number && Demo::Tour.step(number)
     return redirect_to(demo_path, alert: "There is no demo step #{params[:number]}.") if step.nil?
@@ -30,6 +32,8 @@ class DemoController < ApplicationController
   end
 
   def simulate
+    return redirect_to(demo_path) if Demo::Tour.current(session).nil?
+
     Demo::Tour.go_to(session, 1)
     result = Demo::Tour.simulate!
     flash[:demo] = "#{result.accepted} events accepted · #{result.duplicates} duplicates ignored"

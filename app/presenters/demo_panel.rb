@@ -21,14 +21,20 @@ class DemoPanel
     if prepared_case.resend_count >= Recovery.config.resend_cap
       "The prototype's configured retry limit of #{Recovery.config.resend_cap} has been reached. The resend action is gone and the recommendation moved to a different route."
     else
-      "This case has #{Recovery.config.resend_cap - prepared_case.resend_count} retry remaining under the prototype's configured retry limit of #{Recovery.config.resend_cap}."
+      remaining = Recovery.config.resend_cap - prepared_case.resend_count
+      "This case has #{remaining} #{remaining == 1 ? 'retry' : 'retries'} remaining under the prototype's configured retry limit of #{Recovery.config.resend_cap}."
     end
   end
 
   def instruction
     case step.primary_action
     when :simulate then nil
-    when :complete_prerequisite then "Click Mark relay domain registered. It runs the real application action."
+    when :complete_prerequisite
+      if OrganizationSettings.current.relay_domain_registered
+        "Already registered in this run. Press Next, or Restart Demo to see it again."
+      else
+        "Click Mark relay domain registered. It runs the real application action."
+      end
     when :resend_same_destination then prepared_case && prepared_case.resend_count < Recovery.config.resend_cap ? "Click Record resend attempt to record the final attempt." : nil
     end
   end

@@ -61,7 +61,6 @@ module Demo
 
     FINISH = STEPS.size + 1
     PREPARED_RESEND_REWARD = "rw_007".freeze
-    PREPARED_RESEND_CAUSE = "guided-demo:#{PREPARED_RESEND_REWARD}:resend:1".freeze
     SESSION_KEY = :demo_step
 
     def self.step(number)
@@ -87,24 +86,17 @@ module Demo
     end
 
     def self.simulate!
-      result = Replay.call
-      prepare_resend_case
-      result
+      Replay.call
     end
 
-    def self.prepare_resend_case
-      delivery_case = DeliveryCase.find_by(reward_id: PREPARED_RESEND_REWARD)
-      return if delivery_case.nil? || delivery_case.resend_count > 0
-
-      Recovery::Act.call(delivery_case.id, :resend_same_destination, expected_lock_version: delivery_case.lock_version, now: Time.current, cause_id: PREPARED_RESEND_CAUSE)
-    end
-
-    def self.advance_after_action(session, action)
+    def self.advance_after_action(session, action, delivery_case)
       number = current(session)
       return if number.nil?
 
       step = step(number)
-      session[SESSION_KEY] = number + 1 if step && step.advances_on == action.to_s
+      return unless step && step.advances_on == action.to_s && step.reward_id == delivery_case.reward_id
+
+      session[SESSION_KEY] = number + 1
     end
 
     def self.destination_case(step)

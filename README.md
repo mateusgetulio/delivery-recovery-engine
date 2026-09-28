@@ -36,6 +36,8 @@ Start it from the "Start Guided Demo" link in the header (or `/demo`). Starting 
 5. Unknown problems fail safe: the unknown-reason case, raw code shown, recommendation "Escalate".
 6. Old information cannot undo newer truth: the out-of-order case, resolved, with the older failure in the history as ignored and stale. "Finish Demo" ends on a four-point summary.
 
+The fixture rewards expire on 2030-01-01, so the demo reads the same until then; after that date the prototype's expiry rule takes over and the relay case recommends escalation instead.
+
 The terminal script, for the same beats plus the signature check:
 
 1. Start from an empty queue. Run `bin/rails demo:replay`. The header shows 26 accepted, 5 duplicates, 0 rejected. Every event went through signature verification, the inbox and the processing job; nothing bypassed the real path.

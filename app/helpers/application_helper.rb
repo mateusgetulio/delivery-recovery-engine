@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def in_demo?
+    Demo::Tour.current(session).present?
+  end
+
   def demo_panel
     return @demo_panel if defined?(@demo_panel)
 

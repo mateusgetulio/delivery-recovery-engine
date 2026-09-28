@@ -28,7 +28,7 @@
   <section class="panel" aria-label="Recommendation">
     <h2>Recommendation</h2>
     <p class="recommendation"><%= @presenter.recommendation_label %></p>
-    <% if @decision.recommended_action && !@decision.allows?(:resend_same_destination) %>
+    <% if @decision.reason_code.in?(%i[prerequisite_missing resend_cap_reached not_retryable]) %>
       <p class="withheld">Retry unavailable</p>
     <% end %>
     <p class="explanation"><%= @decision.explanation %></p>

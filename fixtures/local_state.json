@@ -3,6 +3,10 @@
     {
       "reward_id": "rw_capped",
       "resend_count": 2
+    },
+    {
+      "reward_id": "rw_007",
+      "resend_count": 1
     }
   ]
 }

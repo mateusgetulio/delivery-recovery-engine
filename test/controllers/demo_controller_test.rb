@@ -36,7 +36,9 @@ class DemoControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select ".demo-confirm", "26 events accepted · 5 duplicates ignored"
     assert_select "table.cases tbody tr", 24
-    assert_equal 1, DeliveryCase.find_by!(reward_id: "rw_007").resend_count
+    prepared_case = DeliveryCase.find_by!(reward_id: "rw_007")
+    assert_equal 1, prepared_case.resend_count
+    assert_equal "fixture local state", prepared_case.transitions.where(actor_type: "operator").sole.metadata["source"]
 
     get demo_step_path(2)
     relay = DeliveryCase.find_by!(reward_id: "rw_006")
@@ -126,12 +128,46 @@ class DemoControllerTest < ActionDispatch::IntegrationTest
     assert_select ".empty a", "Start the guided demo"
 
     get demo_step_path(1)
+    assert_redirected_to demo_path
+    post demo_simulate_path
+    assert_redirected_to demo_path
+    assert_equal 0, DeliveryCase.count
+
+    post demo_start_path
+    follow_redirect!
     follow_redirect!
     assert_select ".demo-panel"
 
     delete demo_leave_path
     get root_path
     assert_select ".demo-panel", count: 0
+  end
+
+  test "a refused action does not advance the tour, and Back from step three explains the prerequisite is already complete" do
+    post demo_start_path
+    post demo_simulate_path
+    get demo_step_path(2)
+    relay = DeliveryCase.find_by!(reward_id: "rw_006")
+
+    post case_actions_path(relay), params: { action_name: "complete_prerequisite", lock_version: relay.lock_version + 5 }
+    follow_redirect!
+    assert_select ".flash.alert", /changed since it was shown/
+    assert_select ".demo-step", "Demo 2 of 6"
+
+    spam = DeliveryCase.find_by!(reward_id: "rw_005")
+    post case_actions_path(spam), params: { action_name: "complete_prerequisite", lock_version: spam.lock_version }
+    follow_redirect!
+    assert_select ".demo-step", "Demo 2 of 6"
+
+    post case_actions_path(relay), params: { action_name: "complete_prerequisite", lock_version: relay.lock_version }
+    follow_redirect!
+    assert_select ".demo-step", "Demo 3 of 6"
+
+    get demo_step_path(2)
+    follow_redirect!
+    assert_select ".demo-step", "Demo 2 of 6"
+    assert_select ".demo-instruction", /Already registered in this run/
+    assert_select "button", { text: "Mark relay domain registered", count: 0 }
   end
 
   private
