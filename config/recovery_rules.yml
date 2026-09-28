@@ -1,0 +1,56 @@
+resend_cap: 2
+
+reasons:
+  invalid_email:
+    same_destination: false
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  mailbox_unavailable:
+    same_destination: true
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  invalid_domain:
+    same_destination: false
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  domain_block:
+    same_destination: true
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  spam_report:
+    same_destination: true
+    prerequisite: spam_suppression_removed
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  apple_private_relay:
+    same_destination: true
+    prerequisite: relay_registration
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  email_delivery_failed:
+    same_destination: true
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel]
+    evidence: documented
+  smtp_delivery_failed:
+    same_destination: true
+    prerequisite: ~
+    other_actions: [request_new_destination, cancel, escalate]
+    evidence: assumed
+  sms_delivery_failed:
+    same_destination: true
+    prerequisite: ~
+    other_actions: [request_new_destination, deliver_another_way, cancel]
+    evidence: documented
+
+unknown_reason:
+  same_destination: false
+  prerequisite: ~
+  other_actions: [escalate]
+  evidence: prototype
+
+awaiting_recipient_reasons: [mailbox_unavailable, domain_block]
