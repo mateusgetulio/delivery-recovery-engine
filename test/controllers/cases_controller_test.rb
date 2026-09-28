@@ -52,7 +52,7 @@ class CasesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to case_path(delivery_case)
     assert_equal 1, delivery_case.reload.resend_count
     follow_redirect!
-    assert_select ".flash.notice", /Recorded/
+    assert_select ".flash.notice", /Action recorded/
   end
 
   test "a stale form is refused with an alert and applies nothing" do

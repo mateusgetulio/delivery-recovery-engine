@@ -7,7 +7,7 @@ class CaseActionsController < ApplicationController
       now: Time.current,
       params: params.permit(:destination).to_h.symbolize_keys
     )
-    redirect_to case_path(params[:case_id]), notice: "Recorded #{params[:action_name].to_s.humanize.downcase}."
+    redirect_to case_path(params[:case_id]), notice: "Action recorded. Nothing was sent."
   rescue Recovery::StaleCaseVersion
     redirect_to case_path(params[:case_id]), alert: "This case changed since it was shown. Reload and decide again."
   rescue Recovery::Error => e

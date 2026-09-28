@@ -1,0 +1,8 @@
+{
+  "delivery_cases": [
+    {
+      "reward_id": "rw_capped",
+      "resend_count": 2
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+[
+  {
+    "uuid": "f5898cc2-7b54-51e5-96fb-c7a98ef80603",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:07Z",
+    "data": {
+      "reward_id": "rw_006",
+      "channel": "email",
+      "reason": "apple_private_relay",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "efbd9367-3389-5e90-8ed5-f85014332d3a",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:11Z",
+    "data": {
+      "reward_id": "rw_010",
+      "channel": "email",
+      "reason": "invalid_email",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "119fb12f-72a3-579f-b230-ef794202c622",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:09:00Z",
+    "data": {
+      "reward_id": "rw_expired",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "15994cb3-3926-53a6-9631-632193099297",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:08Z",
+    "data": {
+      "reward_id": "rw_007",
+      "channel": "email",
+      "reason": "email_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "119fb12f-72a3-579f-b230-ef794202c622",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:09:00Z",
+    "data": {
+      "reward_id": "rw_expired",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "f5898cc2-7b54-51e5-96fb-c7a98ef80603",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:07Z",
+    "data": {
+      "reward_id": "rw_006",
+      "channel": "email",
+      "reason": "apple_private_relay",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "cd5d2270-cf38-57e1-8918-da124dafbda9",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:09Z",
+    "data": {
+      "reward_id": "rw_008",
+      "channel": "email",
+      "reason": "smtp_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "932f1bb1-bec2-50d0-8dfc-5bef6273a2af",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:11:00Z",
+    "data": {
+      "reward_id": "rw_recovered",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "5a9c4980-3f4a-5a68-8f32-f468312ffadf",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:02Z",
+    "data": {
+      "reward_id": "rw_001",
+      "channel": "email",
+      "reason": "invalid_email",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "4e2557b8-9016-5626-b84c-1cf2c668461e",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:16Z",
+    "data": {
+      "reward_id": "rw_015",
+      "channel": "email",
+      "reason": "apple_private_relay",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "f89d5363-a2fc-574e-9845-57c2ef28e33d",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:10Z",
+    "data": {
+      "reward_id": "rw_009",
+      "channel": "sms",
+      "reason": "sms_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "52641e2c-4b6c-5c4e-a3fe-5060da41c657",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:17Z",
+    "data": {
+      "reward_id": "rw_016",
+      "channel": "email",
+      "reason": "email_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "3d06a70c-b611-5c91-9595-ccf4e5de40fd",
+    "event_type": "reward.delivery.succeeded",
+    "occurred_at": "2026-09-28T09:11:30Z",
+    "data": {
+      "reward_id": "rw_recovered"
+    }
+  },
+  {
+    "uuid": "3bf3abb1-3f7e-560a-b283-5ea9930c9c01",
+    "event_type": "reward.delivery.succeeded",
+    "occurred_at": "2026-09-28T09:12:30Z",
+    "data": {
+      "reward_id": "rw_outoforder"
+    }
+  },
+  {
+    "uuid": "739f0ae2-f661-581c-814b-d92101273c73",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:10:00Z",
+    "data": {
+      "reward_id": "rw_capped",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "8bff3e96-c2db-553c-b84f-80955de02ddc",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:15Z",
+    "data": {
+      "reward_id": "rw_014",
+      "channel": "email",
+      "reason": "spam_report",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "776b34e0-e86c-5995-b70c-625dd370e8c3",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:12:00Z",
+    "data": {
+      "reward_id": "rw_outoforder",
+      "channel": "email",
+      "reason": "domain_block",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "29990f7b-a359-5470-8335-ff49808ffa2d",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:12Z",
+    "data": {
+      "reward_id": "rw_011",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "15994cb3-3926-53a6-9631-632193099297",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:08Z",
+    "data": {
+      "reward_id": "rw_007",
+      "channel": "email",
+      "reason": "email_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "0954f2f2-9ee5-56c0-aa1b-8c27ab5b0957",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:18Z",
+    "data": {
+      "reward_id": "rw_017",
+      "channel": "email",
+      "reason": "smtp_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "efbd9367-3389-5e90-8ed5-f85014332d3a",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:11Z",
+    "data": {
+      "reward_id": "rw_010",
+      "channel": "email",
+      "reason": "invalid_email",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "d14870a6-34cd-5671-9d06-acf0bbcea6a0",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:08:01Z",
+    "data": {
+      "reward_id": "rw_019",
+      "channel": "email",
+      "reason": "domain_block",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "f54a0bb6-c8a9-552f-954a-1dc5c984fa5c",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:13Z",
+    "data": {
+      "reward_id": "rw_012",
+      "channel": "email",
+      "reason": "invalid_domain",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "4c373e4f-df28-5205-b7f5-123a85689759",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:05Z",
+    "data": {
+      "reward_id": "rw_004",
+      "channel": "email",
+      "reason": "domain_block",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "205fa637-b959-5d39-8809-a193b275813c",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:19Z",
+    "data": {
+      "reward_id": "rw_018",
+      "channel": "sms",
+      "reason": "sms_delivery_failed",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "5f85c320-f2f4-5e71-947d-2dd7f9c0015e",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:04Z",
+    "data": {
+      "reward_id": "rw_003",
+      "channel": "email",
+      "reason": "invalid_domain",
+      "retryable": false
+    }
+  },
+  {
+    "uuid": "53310908-7162-5fa3-bc2c-d988e459ffce",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:03Z",
+    "data": {
+      "reward_id": "rw_002",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "d3fd412a-57cb-5d7e-9a68-2aa2f96b6697",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:09:30Z",
+    "data": {
+      "reward_id": "rw_unknown",
+      "channel": "email",
+      "reason": "carrier_pigeon_lost",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "6f535d0d-b022-5dd9-884a-2ec15c9289eb",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:14Z",
+    "data": {
+      "reward_id": "rw_013",
+      "channel": "email",
+      "reason": "domain_block",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "ad2775eb-9d36-5ecb-97b2-b3f2a9fdf4bb",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:05:06Z",
+    "data": {
+      "reward_id": "rw_005",
+      "channel": "email",
+      "reason": "spam_report",
+      "retryable": true
+    }
+  },
+  {
+    "uuid": "29990f7b-a359-5470-8335-ff49808ffa2d",
+    "event_type": "reward.delivery.failed",
+    "occurred_at": "2026-09-28T09:06:12Z",
+    "data": {
+      "reward_id": "rw_011",
+      "channel": "email",
+      "reason": "mailbox_unavailable",
+      "retryable": true
+    }
+  }
+]
