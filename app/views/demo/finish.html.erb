@@ -1,0 +1,18 @@
+<% content_for :title, "Demo complete" %>
+<section class="panel demo-intro" aria-labelledby="demo-finish-heading">
+  <h1 id="demo-finish-heading">Demo complete</h1>
+  <ul class="demo-summary">
+    <li>Turns delivery failures into clear operator actions</li>
+    <li>Blocks actions until prerequisites are satisfied</li>
+    <li>Escalates instead of guessing</li>
+    <li>Protects cases from duplicate and out-of-order events</li>
+  </ul>
+  <div class="actions">
+    <%= form_with url: demo_restart_path, method: :post, class: "action-form" do |f| %>
+      <%= f.button "Restart Demo", class: "primary" %>
+    <% end %>
+    <%= form_with url: demo_leave_path, method: :delete, class: "action-form" do |f| %>
+      <%= f.button "Return to Application" %>
+    <% end %>
+  </div>
+</section>

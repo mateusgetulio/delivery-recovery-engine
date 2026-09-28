@@ -7,15 +7,21 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag :app %>
   </head>
-  <body>
+  <body class="<%= 'in-demo' if demo_panel %>">
     <header class="topbar">
       <%= link_to "Delivery Recovery Engine", root_path, class: "brand" %>
       <span class="muted">Failures in, explainable decisions out</span>
+      <% if demo_panel %>
+        <%= button_to "Exit demo", demo_leave_path, method: :delete, class: "quiet topbar-action", form_class: "action-form" %>
+      <% else %>
+        <%= link_to "Start Guided Demo", demo_path, class: "topbar-action" %>
+      <% end %>
     </header>
     <% if notice %><p class="flash notice" role="status"><%= notice %></p><% end %>
     <% if alert %><p class="flash alert" role="alert"><%= alert %></p><% end %>
     <main class="page">
       <%= yield %>
     </main>
+    <%= render "demo/panel", panel: demo_panel if demo_panel %>
   </body>
 </html>

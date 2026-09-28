@@ -1,0 +1,46 @@
+<aside class="demo-panel" aria-labelledby="demo-panel-heading">
+  <p class="demo-step" id="demo-panel-heading">Demo <%= panel.number %> of <%= panel.total %></p>
+  <h2><%= panel.title %></h2>
+
+  <h3>What you're seeing</h3>
+  <p><%= panel.what %></p>
+  <% if flash[:demo] %>
+    <p class="demo-confirm" role="status"><%= flash[:demo] %></p>
+    <p class="muted">Events passed through the same webhook and processing path used by the application.</p>
+  <% end %>
+  <% if panel.instruction %>
+    <p class="demo-instruction"><%= panel.instruction %></p>
+  <% end %>
+  <% if panel.relay_cases.any? %>
+    <ul class="demo-list">
+      <% panel.relay_cases.each do |row| %>
+        <li><%= link_to row.delivery_case.reward_id, case_path(row.delivery_case) %> <span class="muted">now <%= row.recommendation %></span></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <h3>Why it matters</h3>
+  <p><%= panel.why %></p>
+
+  <% if panel.step.primary_action == :simulate %>
+    <%= form_with url: demo_simulate_path, method: :post, class: "action-form" do |f| %>
+      <%= f.button "Simulate incoming delivery events", class: "primary" %>
+    <% end %>
+  <% end %>
+
+  <nav class="demo-nav" aria-label="Demo navigation">
+    <% if panel.first? %>
+      <span class="muted">← Back</span>
+    <% else %>
+      <%= link_to "← Back", demo_step_path(panel.number - 1), class: "demo-link" %>
+    <% end %>
+    <% if panel.last? %>
+      <%= link_to "Finish Demo", demo_finish_path, class: "demo-link primary" %>
+    <% else %>
+      <%= link_to "Next →", demo_step_path(panel.number + 1), class: "demo-link primary" %>
+    <% end %>
+    <%= form_with url: demo_restart_path, method: :post, class: "action-form" do |f| %>
+      <%= f.button "Restart Demo", class: "quiet" %>
+    <% end %>
+  </nav>
+</aside>

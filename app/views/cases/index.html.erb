@@ -17,7 +17,7 @@
 </section>
 
 <% if @rows.empty? %>
-  <p class="empty">No cases. Replay the fixture with <code>bin/rails demo:replay</code>.</p>
+  <p class="empty">No cases. <%= link_to "Start the guided demo", demo_path %> or replay the fixture with <code>bin/rails demo:replay</code>.</p>
 <% else %>
   <table class="cases">
     <thead>

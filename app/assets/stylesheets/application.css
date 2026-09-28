@@ -94,3 +94,30 @@ input[type="text"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid va
 .who-operator { background: var(--accent-soft); color: var(--accent); }
 
 @media (max-width: 800px) { .columns { grid-template-columns: 1fr; } }
+
+.topbar-action { margin-left: auto; font-size: 0.9rem; }
+button.quiet { background: transparent; border-color: var(--line); color: var(--muted); }
+.withheld { display: inline-block; margin: 0 0 0.5rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font-size: 0.85rem; font-weight: 600; }
+
+body.in-demo .page { padding-right: 24rem; }
+.demo-panel { position: fixed; right: 1rem; bottom: 1rem; top: 4.5rem; width: 21.5rem; overflow: auto; background: #fff; border: 2px solid var(--accent); border-radius: 10px; padding: 1rem 1.15rem; box-shadow: 0 8px 24px rgba(27, 27, 31, 0.12); }
+.demo-panel h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
+.demo-panel h3 { margin: 0.9rem 0 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.demo-panel p { margin: 0 0 0.35rem; }
+.demo-step { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+.demo-confirm { margin-top: 0.5rem; padding: 0.4rem 0.6rem; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.demo-instruction { padding: 0.4rem 0.6rem; border-left: 3px solid var(--accent); background: var(--surface); }
+.demo-list { margin: 0.35rem 0; padding-left: 1.1rem; }
+.demo-nav { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--line); }
+.demo-link { padding: 0.4rem 0.75rem; border: 1px solid var(--line); border-radius: 6px; text-decoration: none; color: var(--ink); }
+.demo-link.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.demo-panel .action-form { margin-top: 0.5rem; }
+.demo-nav .action-form { margin: 0 0 0 auto; }
+.demo-intro { max-width: 42rem; }
+.demo-intro h1 { margin-top: 0; }
+.demo-summary { font-size: 1.05rem; line-height: 1.8; }
+
+@media (max-width: 1100px) {
+  body.in-demo .page { padding-right: 1.25rem; padding-bottom: 22rem; }
+  .demo-panel { top: auto; left: 1rem; right: 1rem; width: auto; max-height: 20rem; }
+}

@@ -8,6 +8,7 @@ class CaseActionsController < ApplicationController
       now: Time.current,
       params: params.permit(:destination).to_h.symbolize_keys
     )
+    Demo::Tour.advance_after_action(session, action)
     redirect_to case_path(params[:case_id]), notice: "#{CasePresenter.action_label(action)} recorded. Nothing was sent."
   rescue Recovery::StaleCaseVersion
     redirect_to case_path(params[:case_id]), alert: "This case changed since it was shown. Reload and decide again."

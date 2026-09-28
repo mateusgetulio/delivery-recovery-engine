@@ -28,6 +28,9 @@
   <section class="panel" aria-label="Recommendation">
     <h2>Recommendation</h2>
     <p class="recommendation"><%= @presenter.recommendation_label %></p>
+    <% if @decision.recommended_action && !@decision.allows?(:resend_same_destination) %>
+      <p class="withheld">Retry unavailable</p>
+    <% end %>
     <p class="explanation"><%= @decision.explanation %></p>
     <p class="muted">Rule: <code><%= @decision.rule.reason || "unknown reason" %></code>, evidence <%= @decision.rule.evidence %>, decision code <code><%= @decision.reason_code %></code>.</p>
 

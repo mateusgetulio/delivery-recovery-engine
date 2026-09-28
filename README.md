@@ -23,7 +23,20 @@ It is a small Rails 8 application, built in a day, for the case where a reward o
 
 ![The same case after the prerequisite was marked complete](docs/case-after-prerequisite.png)
 
-The two-minute script:
+![The guided demo panel beside a relay case after the prerequisite was marked complete](docs/guided-demo-step-3.png)
+
+### Guided demo
+
+Start it from the "Start Guided Demo" link in the header (or `/demo`). Starting resets the data to a known state and walks six steps inside the real application, each with a panel that says what is on the screen, why it matters, and which button to press. The buttons are the application's own actions; the only demo-specific code resets, navigates, explains and prepares state. Every restart produces exactly the same cases, recommendations, counts, history and button states, so it can be recorded repeatedly without touching the terminal.
+
+1. New failures arrive: an empty queue, then "Simulate incoming delivery events" replays the fixture through the webhook path. 26 events accepted, 5 duplicates ignored.
+2. The system blocks an unsafe retry: the private relay case, recommendation "Complete prerequisite", retry unavailable. Press "Mark relay domain registered".
+3. One fix updates every affected case: the same case now says "Retry same destination", and the panel lists the other relay case that changed with it.
+4. The system knows when to stop retrying: a case prepared with one resend already recorded. Press "Record resend attempt" and the button disappears, with the explanation that the prototype's configured retry limit has been reached.
+5. Unknown problems fail safe: the unknown-reason case, raw code shown, recommendation "Escalate".
+6. Old information cannot undo newer truth: the out-of-order case, resolved, with the older failure in the history as ignored and stale. "Finish Demo" ends on a four-point summary.
+
+The terminal script, for the same beats plus the signature check:
 
 1. Start from an empty queue. Run `bin/rails demo:replay`. The header shows 26 accepted, 5 duplicates, 0 rejected. Every event went through signature verification, the inbox and the processing job; nothing bypassed the real path.
 2. Open the relay case. The facts carry their owner (event, reward, local, organization). The recommendation is "Complete prerequisite" with the rule that produced it, and there is no resend button. Click "Mark relay domain registered". The recommendation flips to "Retry same destination", and so does every other relay case, because the fact is organization scoped.
@@ -95,7 +108,7 @@ Ruby 4.0 (pinned in `.ruby-version`), SQLite. No JavaScript.
 
 ```
 bin/setup --skip-server        # bundle and database
-bin/rails demo:replay          # signed fixture through the real webhook path
+bin/rails demo:replay          # signed fixture through the real webhook path, or use the guided demo in the browser
 bin/rails server               # http://localhost:3000
 bin/ci                         # bin/setup, RuboCop, bundler-audit, Brakeman, tests, seeds
 ```

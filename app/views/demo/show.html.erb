@@ -1,0 +1,9 @@
+<% content_for :title, "Guided demo" %>
+<section class="panel demo-intro" aria-labelledby="demo-heading">
+  <h1 id="demo-heading">Guided demo</h1>
+  <p>Six short steps through the strongest parts of the engine, inside the real application. Every step lands on the screen it needs, explains what is on it, and says why it matters. The actions you click are the same actions an operator would use.</p>
+  <p class="muted">Starting resets the demo data to a known state, so every run looks exactly the same. <% if @case_count > 0 %>The <%= @case_count %> cases currently in the queue will be removed.<% end %></p>
+  <%= form_with url: demo_start_path, method: :post, class: "action-form" do |f| %>
+    <%= f.button "Start Guided Demo", class: "primary" %>
+  <% end %>
+</section>
