@@ -1,0 +1,71 @@
+<% content_for :title, "Case #{@delivery_case.reward_id}" %>
+<p><%= link_to "Back to queue", root_path %></p>
+<h1>Reward <%= @delivery_case.reward_id %> <span class="status status-<%= @delivery_case.status %>"><%= @delivery_case.status.humanize %></span></h1>
+
+<div class="columns">
+  <section class="panel" aria-label="Facts">
+    <h2>Facts</h2>
+    <dl class="facts">
+      <dt>Channel <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.channel || "unknown" %></dd>
+      <dt>Failure reason <span class="owner owner-event">event</span></dt><dd><% if @delivery_case.reason %><code><%= @delivery_case.reason %></code><% else %><span class="muted">none, last event was a success</span><% end %></dd>
+      <dt>Retryable <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.retryable ? "yes" : "no" %></dd>
+      <dt>Latest event <span class="owner owner-event">event</span></dt><dd><%= @delivery_case.latest_event_at&.utc&.iso8601 || "none" %></dd>
+      <dt>Destination <span class="owner owner-reward">reward</span></dt><dd><%= @delivery_case.destination || "unknown" %></dd>
+      <dt>Expires <span class="owner owner-reward">reward</span></dt><dd><%= @delivery_case.expires_at&.utc&.iso8601 || "no expiry" %></dd>
+      <dt>Resend attempts <span class="owner owner-local">local</span></dt><dd><%= @delivery_case.resend_count %> of <%= Recovery.config.resend_cap %></dd>
+      <% if @decision.prerequisite == :relay_registration %>
+        <dt>Relay domain registered <span class="owner owner-local">organization</span></dt><dd><%= @settings.relay_domain_registered ? "yes" : "no" %></dd>
+      <% end %>
+      <% if @decision.prerequisite == :spam_suppression_removed %>
+        <dt>Suppression removed <span class="owner owner-local">local</span></dt><dd><%= @delivery_case.spam_suppression_removed ? "yes" : "no" %></dd>
+      <% end %>
+    </dl>
+  </section>
+
+  <section class="panel" aria-label="Recommendation">
+    <h2>Recommendation</h2>
+    <p class="recommendation"><%= @presenter.recommendation_label %></p>
+    <p class="explanation"><%= @decision.explanation %></p>
+    <p class="muted">Rule: <code><%= @decision.rule.reason || "unknown reason" %></code>, evidence <%= @decision.rule.evidence %>, decision code <code><%= @decision.reason_code %></code>.</p>
+
+    <h3>Allowed actions</h3>
+    <% if @decision.allowed_actions.empty? %>
+      <p class="muted">None. The case is closed.</p>
+    <% else %>
+      <div class="actions">
+        <% @decision.allowed_actions.each do |action| %>
+          <%= form_with url: case_actions_path(@delivery_case), method: :post, class: "action-form" do |f| %>
+            <%= f.hidden_field :action_name, value: action %>
+            <%= f.hidden_field :lock_version, value: @delivery_case.lock_version %>
+            <% if action == :request_new_destination %>
+              <%= f.text_field :destination, placeholder: "new destination (masked)", "aria-label": "New destination" %>
+            <% end %>
+            <%= f.button @presenter.action_label(action), class: (action == @decision.recommended_action ? "primary" : nil) %>
+          <% end %>
+        <% end %>
+      </div>
+      <p class="muted">Buttons record intent or work completed elsewhere. Nothing here sends anything.</p>
+    <% end %>
+  </section>
+</div>
+
+<section class="panel" aria-label="History">
+  <h2>History</h2>
+  <ol class="timeline">
+    <% @history.each do |time, kind, record| %>
+      <li class="entry entry-<%= kind %>">
+        <time datetime="<%= time.utc.iso8601 %>"><%= time.utc.strftime("%H:%M:%S") %></time>
+        <% if kind == :event %>
+          <span class="who">Event</span>
+          <code><%= record.event_type %></code>
+          <% if record.event_type == "reward.delivery.failed" %>reason <code><%= record.payload["reason"] %></code>, retryable <%= record.payload["retryable"] ? "yes" : "no" %><% end %>
+          <span class="muted">occurred <%= record.occurred_at.utc.iso8601 %>, <%= record.status %><%= " (#{record.ignored_reason.humanize.downcase})" if record.ignored_reason %><%= ", #{record.duplicates_seen} duplicate deliveries" if record.duplicates_seen > 0 %></span>
+        <% else %>
+          <span class="who who-<%= record.actor_type %>"><%= record.actor_type.humanize %></span>
+          <%= record.action.humanize %>
+          <span class="muted"><%= record.from_status&.humanize || "new" %> to <%= record.to_status.humanize %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</section>

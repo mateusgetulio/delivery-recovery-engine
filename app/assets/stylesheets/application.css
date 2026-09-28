@@ -1,10 +1,96 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+:root {
+  --ink: #1b1b1f;
+  --muted: #5b5f6b;
+  --line: #e2e4ea;
+  --accent: #1f6f5b;
+  --accent-soft: #e5f3ee;
+  --warn: #b45309;
+  --warn-soft: #fff4d6;
+  --danger: #b91c1c;
+  --danger-soft: #fde8e8;
+  --surface: #f6f7fb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+a { color: var(--accent); }
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand { font-weight: 700; text-decoration: none; color: var(--ink); }
+
+.page { max-width: 72rem; margin: 0 auto; padding: 1.25rem; }
+
+.flash { margin: 0; padding: 0.6rem 1.25rem; }
+.flash.notice { background: var(--accent-soft); }
+.flash.alert { background: var(--danger-soft); color: var(--danger); }
+
+.counts { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.count { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 0.6rem 0.9rem; min-width: 8.5rem; }
+.count strong { display: block; font-size: 1.4rem; }
+.count span { color: var(--muted); font-size: 0.85rem; }
+.count.warn { border-color: var(--warn); }
+
+.recommendations { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.pill { padding: 0.35rem 0.75rem; border: 1px solid var(--line); border-radius: 999px; background: #fff; text-decoration: none; color: var(--ink); font-size: 0.9rem; }
+.pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.cases { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cases th, .cases td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.cases th { background: var(--surface); color: var(--muted); font-weight: 600; }
+
+.status { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; background: var(--line); vertical-align: middle; }
+.status-open { background: var(--accent-soft); color: var(--accent); }
+.status-awaiting_prerequisite, .status-awaiting_recipient { background: var(--warn-soft); color: var(--warn); }
+.status-resolved { background: #dcfce7; color: #15803d; }
+.status-escalated, .status-cancelled { background: var(--danger-soft); color: var(--danger); }
+
+.empty { padding: 2rem; text-align: center; color: var(--muted); }
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.25rem; }
+.panel h2 { margin: 0 0 0.75rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.panel h3 { margin: 1rem 0 0.5rem; font-size: 0.9rem; }
+
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+
+.owner { font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 999px; margin-left: 0.3rem; vertical-align: middle; }
+.owner-event { background: #e0e7ff; color: #3730a3; }
+.owner-reward { background: #fce7f3; color: #9d174d; }
+.owner-local { background: var(--accent-soft); color: var(--accent); }
+
+.recommendation { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.35rem; }
+.explanation { margin: 0 0 0.5rem; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.action-form { display: flex; gap: 0.35rem; margin: 0; }
+button { font: inherit; padding: 0.45rem 0.8rem; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+input[type="text"] { font: inherit; padding: 0.4rem 0.5rem; border: 1px solid var(--line); border-radius: 6px; }
+
+.timeline { list-style: none; margin: 0; padding: 0; }
+.entry { display: flex; gap: 0.75rem; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; flex-wrap: wrap; }
+.entry time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.who { font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--line); }
+.who-operator { background: var(--accent-soft); color: var(--accent); }
+
+@media (max-width: 800px) { .columns { grid-template-columns: 1fr; } }

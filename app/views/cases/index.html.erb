@@ -1,0 +1,41 @@
+<% content_for :title, "Recovery queue" %>
+<section class="counts" aria-label="Ingestion">
+  <div class="count"><strong><%= @inbox[:pending] %></strong><span>pending events</span></div>
+  <div class="count <%= 'warn' if @inbox[:failed] > 0 %>"><strong><%= @inbox[:failed] %></strong><span>failed processing</span></div>
+  <div class="count <%= 'warn' if @inbox[:rejected_requests] > 0 %>"><strong><%= @inbox[:rejected_requests] %></strong><span>rejected bodies</span></div>
+  <div class="count <%= 'warn' if @inbox[:rejected_signatures] > 0 %>"><strong><%= @inbox[:rejected_signatures] %></strong><span>rejected signatures</span></div>
+  <div class="count"><strong><%= @inbox[:duplicates] %></strong><span>duplicates seen</span></div>
+</section>
+
+<section class="recommendations" aria-label="Cases by recommendation">
+  <%= link_to "All cases", root_path, class: ("pill active" unless params[:recommendation].present?) || "pill" %>
+  <% Recovery::Policy::PRIORITY.each do |action| %>
+    <% count = @counts[action] || 0 %>
+    <%= link_to "#{CasePresenter.recommendation_label(action)} #{count}", root_path(recommendation: action), class: params[:recommendation] == action.to_s ? "pill active" : "pill" %>
+  <% end %>
+  <%= link_to "No action #{@counts[nil] || 0}", root_path(recommendation: ""), class: "pill" if @counts[nil] %>
+</section>
+
+<% if @rows.empty? %>
+  <p class="empty">No cases. Replay the fixture with <code>bin/rails demo:replay</code>.</p>
+<% else %>
+  <table class="cases">
+    <thead>
+      <tr><th>Reward</th><th>Channel</th><th>Reason</th><th>Retryable</th><th>Resends</th><th>Expires</th><th>Status</th><th>Recommendation</th></tr>
+    </thead>
+    <tbody>
+      <% @rows.each do |row| %>
+        <tr>
+          <td><%= link_to row.delivery_case.reward_id, case_path(row.delivery_case) %></td>
+          <td><%= row.delivery_case.channel || "unknown" %></td>
+          <td><% if row.delivery_case.reason %><code><%= row.delivery_case.reason %></code><% else %><span class="muted">none</span><% end %></td>
+          <td><%= row.delivery_case.retryable ? "yes" : "no" %></td>
+          <td><%= row.delivery_case.resend_count %></td>
+          <td><%= row.delivery_case.expires_at&.to_date || "none" %></td>
+          <td><span class="status status-<%= row.delivery_case.status %>"><%= row.delivery_case.status.humanize %></span></td>
+          <td><%= row.recommendation_label %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
