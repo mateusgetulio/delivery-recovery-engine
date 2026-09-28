@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_28_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
   create_table "delivery_cases", force: :cascade do |t|
     t.string "reward_id", null: false
     t.string "channel"
@@ -29,10 +29,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_150000) do
     t.index ["status"], name: "index_delivery_cases_on_status"
   end
 
+  create_table "inbound_events", force: :cascade do |t|
+    t.string "event_uuid", null: false
+    t.string "event_type", null: false
+    t.datetime "occurred_at", null: false
+    t.datetime "received_at", null: false
+    t.text "raw_body", null: false
+    t.json "payload", default: {}, null: false
+    t.string "status", default: "pending", null: false
+    t.string "ignored_reason"
+    t.integer "attempts", default: 0, null: false
+    t.text "last_error"
+    t.integer "duplicates_seen", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_uuid"], name: "index_inbound_events_on_event_uuid", unique: true
+    t.index ["status"], name: "index_inbound_events_on_status"
+  end
+
+  create_table "ingestion_counters", force: :cascade do |t|
+    t.integer "rejected_signatures", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "organization_settings", force: :cascade do |t|
     t.boolean "relay_domain_registered", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "rejected_requests", force: :cascade do |t|
+    t.text "raw_body", null: false
+    t.string "error", null: false
+    t.datetime "created_at", null: false
   end
 
   create_table "transitions", force: :cascade do |t|

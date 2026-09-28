@@ -3,14 +3,17 @@ require_relative "../config/environment"
 require "rails/test_help"
 require_relative "support/facts_builder"
 require_relative "support/facts_generator"
+require_relative "support/webhook_helpers"
 require_relative "support/clock_guard"
 
 module ActiveSupport
   class TestCase
     parallelize(workers: :number_of_processors)
     include FactsBuilder
+    include WebhookHelpers
     include ClockGuard
 
+    setup { ENV["WEBHOOK_SECRET"] = WebhookHelpers::SECRET }
 
     def create_case(**overrides)
       attributes = {
